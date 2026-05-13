@@ -31,3 +31,32 @@ sourcetype — identifies the data format (CSV)
 The dataset includes logs from multiple machines, allowing comparison across systems and helping identify which devices generated the most failures or suspicious activity. Because the data spans several years, it also supports time‑based analysis using Splunk’s transforming commands.
 
 This dataset provides a realistic foundation for practicing log analysis, threat detection, and SPL query development - all essential skills for cybersecurity and SOC operations.
+
+## ⚠️ Error Log Analysis
+
+To understand the stability and health of the systems in the dataset, I began by analyzing all events classified as **Error**. These logs often indicate system failures, service issues, or misconfigurations that may require attention.
+
+### 🔍 Identifying All Error Events
+I first filtered the dataset to extract only error‑level logs:
+
+```spl
+index=* EntryType="Error"
+This returned 8,981 error events, providing a broad view of system‑level failures across all machines.
+
+🖥️ Errors by Machine
+To determine which systems were generating the most errors, I grouped the results by machine name:
+
+spl
+index=* EntryType="Error" | stats count by MachineName
+
+The results showed a clear distribution:
+
+LAPTOP‑1MKMTVPM — highest number of errors
+
+TMP249‑G3‑M — second highest
+
+DESKTOP‑U6608IT — moderate error volume
+
+Other machines — minimal error activity
+
+This indicates that certain devices were consistently generating more failures, suggesting potential configuration or hardware issues.
