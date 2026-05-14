@@ -53,7 +53,7 @@ The dataset includes logs from multiple machines, allowing comparison across sys
 This dataset provides a realistic foundation for practicing log analysis, threat detection, and SPL query development - all essential skills for cybersecurity and SOC operations.
 
 ##  Error Log Analysis
-### Most Common Error Messages — List View
+### Most Common Error Messages 
 ![Common Error Messages](https://github.com/Anamjavad/splunk-windows-log-analysis/blob/main/1..png?raw=true)
 
 
@@ -133,6 +133,9 @@ This analysis establishes a strong foundation for understanding system health be
 After reviewing system‑level errors, the next step was to investigate authentication‑related events to identify potential misuse, failed login attempts, or unusual access patterns. Login failures can indicate mistyped passwords, misconfigured services, or in some cases, unauthorized access attempts.
 
 ### Identifying Login‑Related Failures
+### Login‑Related Failure Events 
+![Login-Related Failure Events](https://github.com/Anamjavad/splunk-windows-log-analysis/blob/main/7.png?raw=true)
+
 To focus specifically on authentication issues, I filtered the dataset for events containing the term “logon” or “login” within error messages:
 
 ```spl
