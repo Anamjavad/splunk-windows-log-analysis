@@ -1,3 +1,23 @@
+# Splunk Windows Event Log Analysis
+
+## Table of Contents
+- [Introduction](#introduction)
+- [Dataset Description](#dataset-description)
+- [Error Log Analysis](#error-log-analysis)
+  - [Errors by Machine](#errors-by-machine)
+  - [Errors by Source](#errors-by-source)
+  - [Error Trends Over Time](#error-trends-over-time)
+  - [Most Common Error Messages](#most-common-error-messages)
+  - [Summary of Error Log Findings](#summary-of-error-log-findings)
+- [Suspicious Login Activity](#suspicious-login-activity)
+  - [Login Failures by Machine](#login-failures-by-machine)
+  - [Most Common Login Failure Messages](#most-common-login-failure-messages)
+  - [Login Failure Trends Over Time](#login-failure-trends-over-time)
+  - [Summary of Suspicious Login Activity Findings](#summary-of-suspicious-login-activity-findings)
+- [Project Findings](#project-findings)
+- [Project Conclusion](#project-conclusion)
+
+
 ##  Project Introduction
 This project focuses on analyzing Windows Event Logs using Splunk to identify system errors, authentication issues, and suspicious login‑related activity. The goal was to simulate the workflow of a Security Operations Center (SOC) analyst by ingesting real event data, running targeted SPL (Search Processing Language) queries, and interpreting patterns that may indicate system misconfigurations or potential security concerns.
 
@@ -10,23 +30,23 @@ This project uses a Windows Event Log dataset exported as a CSV file and ingeste
 
 Key fields present in the dataset include:
 
-TimeGenerated — the timestamp of when the event occurred
+- TimeGenerated — the timestamp of when the event occurred
 
-Message — the full event description
+- Message — the full event description
 
-EntryType — Information, Warning, or Error
+- EntryType — Information, Warning, or Error
 
-MachineName — the system that generated the event
+- MachineName — the system that generated the event
 
-extracted_Source — the Windows service or component responsible
+- extracted_Source — the Windows service or component responsible
 
-Category — classification of the event
+- Category — classification of the event
 
-host — assigned host value for Splunk indexing
+- host — assigned host value for Splunk indexing
 
-source — the file the logs were ingested from
+- source — the file the logs were ingested from
 
-sourcetype — identifies the data format (CSV)
+- sourcetype — identifies the data format (CSV)
 
 The dataset includes logs from multiple machines, allowing comparison across systems and helping identify which devices generated the most failures or suspicious activity. Because the data spans several years, it also supports time‑based analysis using Splunk’s transforming commands.
 
@@ -52,13 +72,13 @@ index=* EntryType="Error" | stats count by MachineName
 
 The results showed a clear distribution:
 
-LAPTOP‑1MKMTVPM - highest number of errors
+- LAPTOP‑1MKMTVPM - highest number of errors
 
-TMP249‑G3‑M - second highest
+- TMP249‑G3‑M - second highest
 
-DESKTOP‑U6608IT - moderate error volume
+- DESKTOP‑U6608IT - moderate error volume
 
-Other machines - minimal error activity
+- Other machines - minimal error activity
 
 This indicates that certain devices were consistently generating more failures, suggesting potential configuration or hardware issues.
 
@@ -69,11 +89,11 @@ index=* EntryType="Error" | stats count by extracted_Source
 ```
 The breakdown revealed:
 
-Software Protection Platform Service - majority of errors
+- Software Protection Platform Service - majority of errors
 
-Wlclntfy - smaller portion
+- Wlclntfy - smaller portion
 
-Winlogon - minimal contribution
+- Winlogon - minimal contribution
 
 The dominance of the Software Protection Platform Service suggests repeated activation or licensing failures across multiple systems.
 
@@ -125,11 +145,11 @@ index=* Message="*logon*" OR Message="*login*" | stats count by MachineName
 ```
 The results showed:
 
-LAPTOP‑1MKMTVPM — highest number of login failures
+- LAPTOP‑1MKMTVPM — highest number of login failures
 
-TMP249‑G3‑M — second highest
+- TMP249‑G3‑M — second highest
 
-DESKTOP‑U6608IT — lower but still notable activity
+- DESKTOP‑U6608IT — lower but still notable activity
 
 This pattern aligns with the earlier error analysis, where the same machines showed elevated failure rates.
 
@@ -154,15 +174,15 @@ index=* Message="*logon*" OR Message="*login*" | timechart count
 The results showed consistent activity over time, with no major spikes. This suggests ongoing service‑level authentication issues rather than a targeted attack or brute‑force attempt.
 
 ### Summary of Suspicious Login Activity Findings
-1,388 login‑related failures were detected.
+- 1,388 login‑related failures were detected.
 
-Failures were concentrated on the same machines that showed high error activity.
+- Failures were concentrated on the same machines that showed high error activity.
 
-Most failures were caused by services attempting to start with invalid credentials.
+- Most failures were caused by services attempting to start with invalid credentials.
 
-No evidence of brute‑force attacks or sudden spikes in login failures.
+- No evidence of brute‑force attacks or sudden spikes in login failures.
 
-Authentication issues appear to be system‑related, not user‑driven.
+- Authentication issues appear to be system‑related, not user‑driven.
 
 This analysis helps distinguish between normal service misconfigurations and potential security threats, forming a clearer picture of overall system behavior.
 
@@ -180,15 +200,15 @@ The dataset also included 1,388 login‑related failures, many of which were tie
 The machines with the highest error counts were the same ones with the most login failures, reinforcing the idea that these systems were experiencing broader configuration issues.
 
 ### Overall Observations
-System errors and login failures were persistent over time, with no major spikes or sudden increases.
+- System errors and login failures were persistent over time, with no major spikes or sudden increases.
 
-The majority of failures were caused by service‑related issues, not user actions.
+- The majority of failures were caused by service‑related issues, not user actions.
 
-A small number of machines were responsible for most of the problematic events.
+- A small number of machines were responsible for most of the problematic events.
 
-There was no evidence of malicious activity, such as brute‑force login attempts or coordinated attacks.
+- There was no evidence of malicious activity, such as brute‑force login attempts or coordinated attacks.
 
-The environment appears to suffer from recurring configuration and activation problems, rather than security breaches.
+- The environment appears to suffer from recurring configuration and activation problems, rather than security breaches.
 
 These findings help build a clear understanding of the environment’s health and highlight areas where system maintenance, service configuration, or licensing management may need improvement.
 
