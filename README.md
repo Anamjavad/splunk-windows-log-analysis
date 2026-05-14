@@ -105,3 +105,96 @@ This message appeared with different trigger values and reason codes (such as 0x
 - No major spikes over time - issues were persistent and ongoing.
 
 This analysis establishes a strong foundation for understanding system health before moving into authentication‑related investigations.
+
+## Suspicious Login Activity
+After reviewing system‑level errors, the next step was to investigate authentication‑related events to identify potential misuse, failed login attempts, or unusual access patterns. Login failures can indicate mistyped passwords, misconfigured services, or in some cases, unauthorized access attempts.
+
+### Identifying Login‑Related Failures
+To focus specifically on authentication issues, I filtered the dataset for events containing the term “logon” or “login” within error messages:
+
+```spl
+index=* Message="*logon*" OR Message="*login*"
+```
+This search returned 1,388 login‑related failures, indicating a significant number of authentication issues across the environment.
+
+### Login Failures by Machine
+To determine where these failures were occurring, I grouped the results by machine name:
+
+```
+index=* Message="*logon*" OR Message="*login*" | stats count by MachineName
+```
+The results showed:
+
+LAPTOP‑1MKMTVPM — highest number of login failures
+
+TMP249‑G3‑M — second highest
+
+DESKTOP‑U6608IT — lower but still notable activity
+
+This pattern aligns with the earlier error analysis, where the same machines showed elevated failure rates.
+
+### Most Common Login Failure Messages
+To understand the nature of these authentication issues, I identified the most frequent messages:
+
+```
+index=* Message="*logon*" OR Message="*login*" | top Message
+```
+The top recurring message was:
+
+“The Software Protection Platform Service failed to start due to a logon failure.”
+
+This indicates that many login failures were caused by services attempting to start with invalid or expired credentials, rather than human users entering incorrect passwords.
+
+### Login Failure Trends Over Time
+To visualize how login failures occurred across the dataset’s timeline, I used:
+
+```
+index=* Message="*logon*" OR Message="*login*" | timechart count
+```
+The results showed consistent activity over time, with no major spikes. This suggests ongoing service‑level authentication issues rather than a targeted attack or brute‑force attempt.
+
+### Summary of Suspicious Login Activity Findings
+1,388 login‑related failures were detected.
+
+Failures were concentrated on the same machines that showed high error activity.
+
+Most failures were caused by services attempting to start with invalid credentials.
+
+No evidence of brute‑force attacks or sudden spikes in login failures.
+
+Authentication issues appear to be system‑related, not user‑driven.
+
+This analysis helps distinguish between normal service misconfigurations and potential security threats, forming a clearer picture of overall system behavior.
+
+## Project Findings
+This project provided a detailed look into Windows Event Logs across multiple machines, revealing clear patterns in system behavior, recurring failures, and authentication‑related issues. By analyzing both error events and login‑related failures, several key insights emerged.
+
+### System‑Level Issues
+The dataset contained nearly 9,000 error events, with failures heavily concentrated on a small number of machines. These systems consistently generated more errors than others, indicating potential misconfigurations or underlying system instability.
+
+A significant portion of these errors originated from the Software Protection Platform Service, which repeatedly reported activation and licensing failures. This suggests that multiple systems were experiencing ongoing issues with Windows activation rather than hardware or OS‑level crashes.
+
+### Authentication‑Related Behavior
+The dataset also included 1,388 login‑related failures, many of which were tied to services attempting to start with invalid or expired credentials. These failures were not associated with brute‑force attempts or suspicious user activity. Instead, they reflected service‑level authentication problems, likely caused by outdated passwords or misconfigured service accounts.
+
+The machines with the highest error counts were the same ones with the most login failures, reinforcing the idea that these systems were experiencing broader configuration issues.
+
+### Overall Observations
+System errors and login failures were persistent over time, with no major spikes or sudden increases.
+
+The majority of failures were caused by service‑related issues, not user actions.
+
+A small number of machines were responsible for most of the problematic events.
+
+There was no evidence of malicious activity, such as brute‑force login attempts or coordinated attacks.
+
+The environment appears to suffer from recurring configuration and activation problems, rather than security breaches.
+
+These findings help build a clear understanding of the environment’s health and highlight areas where system maintenance, service configuration, or licensing management may need improvement.
+
+## Project Conclusion
+This project demonstrated how Splunk can be used to analyze large volumes of Windows Event Logs and extract meaningful insights about system behavior, service reliability, and authentication patterns. By applying targeted SPL queries, visualizing trends, and breaking down events by machine and source, it became clear that the environment’s issues were primarily related to configuration and service‑level failures rather than security threats.
+
+The analysis showed that a small number of machines were responsible for most of the errors and login failures, with the Software Protection Platform Service generating the majority of recurring issues. These failures were consistent over time and were tied to activation and credential problems rather than malicious activity. Understanding these patterns is essential for improving system stability, reducing repeated failures, and strengthening overall operational health.
+
+Overall, this project highlights the value of log analysis in identifying root causes, distinguishing between normal system behavior and potential threats, and building the foundational skills needed for real‑world SOC and cybersecurity work. It reinforces how structured investigation, clear queries, and data‑driven interpretation can turn raw logs into actionable insights.
