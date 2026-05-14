@@ -53,6 +53,9 @@ The dataset includes logs from multiple machines, allowing comparison across sys
 This dataset provides a realistic foundation for practicing log analysis, threat detection, and SPL query development - all essential skills for cybersecurity and SOC operations.
 
 ##  Error Log Analysis
+### Most Common Error Messages — List View
+![Common Error Messages](https://github.com/Anamjavad/splunk-windows-log-analysis/blob/main/1..png?raw=true)
+
 
 To understand the stability and health of the systems in the dataset, I began by analyzing all events classified as **Error**. These logs often indicate system failures, service issues, or misconfigurations that may require attention.
 
